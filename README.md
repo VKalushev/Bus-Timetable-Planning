@@ -1,4 +1,4 @@
-# Bus Timetable Planning and Footfall Monitor
+# Bus Timetable Planning
 ## Definitely Not Internet Pi-rates
 Our members are Connor Mackay, Connor McHattie, Vasil Kalushev and Reece Mackie.
 
