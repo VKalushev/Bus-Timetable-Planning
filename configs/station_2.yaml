@@ -1,0 +1,5 @@
+# Unique ID for the station
+id: 2
+
+# Set to true to view opencv output on the desktop
+debug: true

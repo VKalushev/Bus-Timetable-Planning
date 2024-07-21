@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Bus Capacity</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <h1>Bus Capacity</h1>
+    <h3 id="capacity">Loading...</h3>
+    <h4 id="time"></h4>
+
+    <script src="https://cdn.jsdelivr.net/npm/luxon@2.3.1/build/global/luxon.min.js"></script>
+
+    <script type="text/javascript">
+        window.onload = function () {
+            // Use luxeon datetime for relative timing
+            const DateTime = luxon.DateTime;
+
+            // Get the capacity element to write to.
+            let capacity = document.getElementById('capacity');
+            let time = document.getElementById('time');
+
+            // Thanks https://stackoverflow.com/a/901144 for teaching me about URLSearchParams
+            const urlParams = new URLSearchParams(window.location.search);
+            const bus = urlParams.get('bus');
+
+            if (bus === null) {
+                capacity.innerHTML = 'Bus number not provided! Please use a direct link for your bus.';
+                time.innerHTML = '';
+            } else {
+                // Start fetching timings. This will refresh the data every 30 seconds.
+                fetchTimings();
+            }
+
+            function fetchTimings() {
+                // Schedule the next run
+                setTimeout(fetchTimings, 30 * 1000);
+
+                // Grab the 'busyness' from the API.
+                fetch('/api/count?bus=' + bus)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error !== undefined) {
+                            capacity.innerHTML = data.error;
+                        } else {
+                            // Calculate user-facing percentage.
+                            let percentage = (data.percentage * 100).toFixed(1);
+
+                            // Display message.
+                            if (data.percentage <= 0.33) {
+                                capacity.innerHTML = `Quiet (${percentage}%)`;
+                            } else if (data.percentage <= 0.66) {
+                                capacity.innerHTML = `Average (${percentage}%)`;
+                            } else if (data.percentage < 1) {
+                                capacity.innerHTML = `Busy (${percentage}%)`;
+                            } else if (data.percentage >= 1) {
+                                capacity.innerHTML = `Full (${percentage}%)`;
+                            } else {
+                                capacity.innerHTML = `${percentage}%`;
+                            }
+
+                            // Display relative time.
+                            time.innerHTML = DateTime.fromISO(data.timestamp).toRelative();
+                        }
+                    })
+                    .catch(err => {
+                        capacity.innerHTML = err;
+                        time.innerHTML = '';
+                    });
+            }
+        };
+    </script>
+</body>
+
+</html>

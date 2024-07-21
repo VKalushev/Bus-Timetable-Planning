@@ -1,0 +1,20 @@
+# Unique ID for the bus
+id: 1
+
+# The route this bus works
+route: 1
+
+# The capacity of the bus (seats)
+capacity: 64
+
+# The ignore region enter position
+ir_entering_position: right
+
+# The ignore region leave position
+ir_leaving_position: left
+
+# Ignore region size relative to camera
+ir_ratio: 0.30
+
+# Set to true to view opencv output on the desktop
+debug: true
